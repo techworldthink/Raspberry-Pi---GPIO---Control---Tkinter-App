@@ -1,3 +1,5 @@
+import time
+import RPi.GPIO as GPIO
 from tkinter.ttk import *
 from tkinter import*
 from tkinter import font
@@ -29,7 +31,7 @@ class Convert:
 
         #PINS STATE
         IO0,IO1,IO2,IO3,IO4,IO5,IO6,IO7,IO8,IO9,IO10,IO11 = 0,0,0,0,0,0,0,0,0,0,0,0
-        C0="red"
+        #COLORS=["red","red","red","red","red","red","red","red","red","red","red","red"]
         
         #labelled frames
         self.frame_left  =  LabelFrame(master,text="GPIO -ON/OFF",labelanchor="n",bg="white",bd=10,fg="red",font=self.label_frame_font)
@@ -56,7 +58,7 @@ class Convert:
         self.frame_left.columnconfigure(11, weight=1)
 
         #componants for frame 1
-        self.Ind_0 = Entry(self.frame_left,bg=C0,fg="green",textvariable = ButtonVar1,width=WIDTH_IND)
+        self.Ind_0 = Entry(self.frame_left,bg="white",fg="green",textvariable = ButtonVar1,width=WIDTH_IND)
         self.Ind_1 = Entry(self.frame_left,bg="white",fg="black",textvariable = ButtonVar1,width=WIDTH_IND)
         self.Ind_2 = Entry(self.frame_left,bg="white",fg="black",textvariable = ButtonVar1,width=WIDTH_IND)
         self.Ind_3 = Entry(self.frame_left,bg="white",fg="black",textvariable = ButtonVar1,width=WIDTH_IND)
@@ -139,17 +141,61 @@ class Convert:
         # -----------------------   define functions here    ----------------------- #
 
         def set_color():
-            global C0
-            self.Ind_0.config({"background": C0})
+            COLORS=["red","red","red","red","red","red","red","red","red","red","red","red"]
+            GPIO.setwarnings(False)
+            GPIO.setmode(GPIO.BCM)
+
+            for pins in range(12):
+                GPIO.setup(pins, GPIO.OUT)
+
+            for pins in range(12):
+                if(GPIO.input(pins)):
+                    COLORS[pins]="green"
+                else:
+                    COLORS[pins]="red"
+                #time.sleep(1)
+           
+            self.Ind_0.config({"background": COLORS[0]})
+            self.Ind_1.config({"background": COLORS[1]})
+            self.Ind_2.config({"background": COLORS[2]})
+            self.Ind_3.config({"background": COLORS[3]})
+            self.Ind_4.config({"background": COLORS[4]})
+            self.Ind_5.config({"background": COLORS[5]})
+            self.Ind_6.config({"background": COLORS[6]})
+            self.Ind_7.config({"background": COLORS[7]})
+            self.Ind_8.config({"background": COLORS[8]})
+            self.Ind_9.config({"background": COLORS[9]})
+            self.Ind_10.config({"background": COLORS[10]})
+            self.Ind_11.config({"background": COLORS[11]})
 
         def get_set_io(PINNO):
-            pass
+            GPIO.setwarnings(False)
+            print("PIN : ")
+            print(PINNO)
+            PIN_CRNT = 0
+            
+            GPIO.setmode(GPIO.BCM)
+            GPIO.setup(PINNO, GPIO.OUT)
+            time.sleep(1)
+            
+            if (GPIO.input(PINNO)):
+                PIN_CRNT = 1
+            #time.sleep(1)
+            #GPIO.cleanup()
+
+            #GPIO.setmode(GPIO.BCM)
+            GPIO.setup(PINNO, GPIO.OUT)
+            time.sleep(1)
+            if(PIN_CRNT==1):
+                GPIO.output(PINNO, GPIO.LOW)
+            else:
+                GPIO.output(PINNO , GPIO.HIGH)
             
         def toggle_pin(PINNO):
-            global C0
-            C0 ="yellow"
             get_set_io(PINNO)
             set_color()
+
+        set_color()
             
         
        
